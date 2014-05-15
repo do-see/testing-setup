@@ -13,7 +13,5 @@ class FeatureContext extends MinkContext
      */
     public function __construct(array $parameters)
     {
-        $this->useContext('example', new ExampleContext($parameters));
-        $this->useContext('wikipedia', new WikipediaContext($parameters));
     }
 }
