@@ -4,7 +4,7 @@ default:
         bootstrap: %behat.paths.features%/bootstrap
     extensions:
         Behat\MinkExtension\Extension:
-            base_url: 'http://en.wikipedia.org/'
+            base_url: 'http://shopware.local/'
             default_session: 'goutte'
             javascript_session: 'sahi'
             sahi: ~
