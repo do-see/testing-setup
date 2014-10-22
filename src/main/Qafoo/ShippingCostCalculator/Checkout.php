@@ -12,6 +12,13 @@ class Checkout
     }
 
     /**
+     * @return int
+     */
+    public function getOverallWeight()
+    {
+    }
+
+    /**
      * @return Qafoo\ShippingCostCalculator\CheckoutItem
      */
     public function getCheckoutItems()
