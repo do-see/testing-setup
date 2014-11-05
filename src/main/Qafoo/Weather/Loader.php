@@ -9,9 +9,9 @@ class Loader
     /**
      * List of weather services used for lookup
      *
-     * @var array(\Qafoo\Weather\Service)
+     * @var \Qafoo\Weather\Service
      */
-    protected $weatherServices;
+    protected $weatherService;
 
     /**
      * Logger used to log events
@@ -29,8 +29,9 @@ class Loader
      * @param \Qafoo\Weather\Service $weatherService
      * @param \Qafoo\Weather\Logger $logger
      */
-    public function __construct(Service $weatherService, Logger $logger = null)
+    public function __construct(Service $weatherService, Logger $logger)
     {
+        $this->weatherService = $weatherService;
     }
 
     /**
@@ -54,6 +55,11 @@ class Loader
      */
     public function getWeatherForLocation(Struct\Location $location)
     {
+        $weather = $this->weatherService->getWeatherForLocation($location);
+        $result = new Struct\LocatedWeather();
+        $result->location = $location;
+        $result->weather = $weather;
+        return $result;
     }
 }
 
