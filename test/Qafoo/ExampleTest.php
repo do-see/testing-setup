@@ -8,9 +8,11 @@ class ExampleTest extends \PHPUnit_Framework_TestCase
     {
         $exampleSubject = new Example();
 
+        $answer = $exampleSubject->getQuestionAnswer();
+
         $this->assertEquals(
             42,
-            $exampleSubject->getQuestionAnswer()
+            $answer
         );
     }
 }
