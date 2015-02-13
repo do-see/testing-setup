@@ -1,0 +1,226 @@
+===================
+PHPUnit Cheat Sheet
+===================
+
+This cheat sheet summarizes the most frequently used features (for
+unit-testing) in PHPUnit and some best practices. Keept it on your desktop when
+you get started with testing.
+
+-------------------
+Writing a Test Case
+-------------------
+
+- Test case is a PHP class deriving ``\PHPUnit_Framework_TestCase``
+- All public methods starting with ``test…()`` are executed as a test case
+
+  - Otherwise, annotation ``@test`` is required (can be easily forgotten)
+  - Instances of test class are cloned before executing any tests, so every
+    test instance is *clean* (test isolation)
+
+- Every test case consists of the steps:
+
+  1. Creating Fixtures (setup, what does the test need needed?)
+  2. Execution / Stimulus (call the method that is tested)
+  3. Verification (what should have happened?)
+  4. [Tear Down] (anything needs cleanup?)
+
+-----------------
+Setup / Tear Down
+-----------------
+
+- Everything that is needed for a test to run is called a *fixture*
+- Setup is typically moved to ``setUp()``
+
+  - Executed before every test case
+  - Move common object creation here
+
+    - Test Doubles (mocks, stubs, ...)
+    - Subject of test = SUT (using the doubles)
+
+  - Store in private attributes to access in tests
+  - Leave fixtures that only belong to 1 test in itself
+  - Create private helper methods for those fixtures that are shared only among
+    some tests
+
+- TearDown is typically done in ``tearDown()``
+
+  - Usually not needed
+  - Only for rare integration-tests or testing legacy code
+  - Examples: Remove temporary file
+
+----------
+Assertions
+----------
+
+- Assertions let you express what you expect to have happened
+
+  - Typically executed on the return value of the method under test
+
+- Assertions commonly have the form ``assert…()``
+
+  - First parameter = Expectation (``<exp>``)
+  - Second parameter = Actual (``<act>``)
+  - Optional failure message (``<msg>``, default is empty string)
+  - Optional delta, e.g. for floats (``<delta>``)
+
+- Most common assertions are (by frequency used):
+
+  - ``assertEquals()``
+
+    - Works with any kind of data type (e.g. string, int, array, object)
+    - Two objects are equal if:
+
+      - Instances of the same class
+      - All attributes are equal
+
+    - Order of associative array keys does not matter
+
+  - ``assertSame()``
+
+    - Same as ``assertEquals()`` for scalars
+    - ``<exp>`` and ``<act>`` refer to the very same instane
+    - Order of associative array keys matters!
+
+  - ``assertNull()``
+  - ``assertTrue()``
+  - ``assertFalse()``
+  - ``assertInstanceOf()``
+
+    - ``<exp>`` is an object of the class denoted in ``<exp>`` (full class
+      name, with namespace!)
+
+  - ``assertInternalType()``
+
+    - ``<exp>`` is of the type, e.g. ``int`` or ``object``
+
+- Typically just 1 assertion per test case
+- More complex assertions:
+
+  - Extract to custom, private assertion method
+  - For re-use between projects, create custom base class
+
+-----
+SetUp
+-----
+
+- ``setUp()`` called before every test method
+
+  - Test class instance is clean before
+  - Do not override constructor, use ``setUp()`` instead!
+
+- Setup common environment for all test-cases
+
+  - Test doubles for dependencies
+
+    - Create empty dummies
+    - Store in private attributes
+    - Add common behavior (customize behavior in tests)
+
+  - Subject Of Test = SUT
+
+    - Store in private variable
+    - Create from test doubles
+
+- In rare cases, SUT from ``setUp()`` might not be used but instantiated
+  directly
+
+  - e.g. Integration tests
+
+------------
+Test Doubles
+------------
+
+- General rules:
+
+  - Leave test doubles as dumb as possible (just make test pass)
+  - Make test doubles as inteligent as neccessary
+  - Try not to mix different double types in 1 object
+
+- Typically
+
+  - Create a depencendy double in ``setUp()``
+  - Fill double behavior in test method
+  - Or create a helper to fill re-usable behavior
+
+- Creating a test double:
+
+  - Basic setup::
+
+    $this->myConceptDouble = $this->getMockBuilder(<full-class-name>)->…->getMock()
+  
+  - Deactivate constructor::
+  
+    $this->my… = $this->getMockBuilder(…)->disableOriginalConstructor()->…
+  
+  - Set which methods to mock (spy, all other methods are left alone)::
+  
+    $this->my… = $this->getMockBuilder(…)->setMethods(array(…))->…
+
+- Modelling behavior of a double::
+
+    $this->myConceptDouble->expects(<how-often>)->method(<method>)
+        [->with(<parameters>)]
+        [->will(<do>)]
+
+  - ``<how-often>``
+
+    - ``$this->any()`` = Stub (no matter how often, just stub return value)
+  
+    - ``$this->once()`` = Mock (only called once)
+  
+    - ``$this->exactly(<int>)`` = Mock (called exactly ``<int>`` times)
+
+  - ``<method>`` = which method should be called
+
+  - ``<parameters>``
+
+    - List of parameter matchers expcted (one matcher for each parameter):
+
+      - ``$this->equalTo(<value>)``
+      - ``$this->isInstanceOf(<full-class-name>)``
+      - ``$this->isInternalType(<type>)``
+
+  - ``<do>``
+
+    - Return a value: ``$this->returnValue(<value-or-reference>)``
+    - Throw an exception: ``$this->throwException(<exception>)``
+    - Return based on callback: Implement custom double!
+
+--------------
+Advanced SetUp
+--------------
+
+- Add behavior to doubles in the test cases themselves
+- Extract common behavior into (private) helper methods
+
+  - e.g. ``makeUserHaveTwoConnections($this->userDouble)`` 
+
+- Creating advanced value objects in a (private) helper to use in tests
+
+  - e.g. ``aUserWithTwoConnections(…)``
+
+---------------------
+Advanced Test Doubles
+---------------------
+
+- Test double generation is limited
+- If you reach its limits, better create your own, custom double
+
+  - e.g. if you would want to use ``$this->returnCallback()``
+  - e.g. if you would want to use ``$this->onSubsequentCalls()``
+
+- Create a class without suffice ``Test()`` in your testing namespace
+
+- Examples:
+
+  - A ``Repository`` in memory
+  - A ``Logger`` in memory
+
+- Assert through new public methods on these doubles through public attributes
+
+..
+   Local Variables:
+   mode: rst
+   fill-column: 79
+   End: 
+   vim: et syn=rst tw=79
