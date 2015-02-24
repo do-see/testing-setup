@@ -45,4 +45,24 @@ class BasketTest extends \PHPUnit_Framework_TestCase
             $items[0]
         );
     }
+
+    public function testBasketWithMultipleUniqueProducts()
+    {
+        $harryPotter1 = new Product("Harry Potter 1", 3.99);
+        $harryPotter2 = new Product("Harry Potter 2", 4.39);
+
+        $this->basket->add($harryPotter1);
+        $this->basket->add($harryPotter2);
+
+        $items = $this->basket->items();
+
+        $this->assertEquals(
+            new BasketItem($harryPotter1, 1),
+            $items[0]
+        );
+        $this->assertEquals(
+            new BasketItem($harryPotter2, 1),
+            $items[1]
+        );
+    }
 }
