@@ -65,4 +65,20 @@ class BasketTest extends \PHPUnit_Framework_TestCase
             $items[1]
         );
     }
+
+    public function testBasketWithMultipleNonUniqueProducts()
+    {
+        $harryPotter1 = new Product("Harry Potter 1", 3.99);
+
+        $this->basket->add(clone $harryPotter1);
+        $this->basket->add(clone $harryPotter1);
+
+        $items = $this->basket->items();
+
+        $this->assertCount(1, $items);
+        $this->assertEquals(
+            new BasketItem($harryPotter1, 2),
+            $items[0]
+        );
+    }
 }
