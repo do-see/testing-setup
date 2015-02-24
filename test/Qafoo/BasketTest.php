@@ -23,4 +23,23 @@ class BasketTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(array(), $basket->items());
     }
+
+    public function testBasketWithSingleProductItem()
+    {
+        $basket = new Basket();
+
+        $harryPotter1 = new Product("Harry Potter 1", 3.99);
+
+        $basket->add($harryPotter1);
+
+        $items = $basket->items();
+
+        $this->assertInternalType('array', $items);
+        $this->assertCount(1, $items);
+
+        $this->assertEquals(
+            new BasketItem($harryPotter1, 1),
+            $items[0]
+        );
+    }
 }
