@@ -13,4 +13,14 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $sum = $checkout->getSum();
         $this->assertEquals(23, $sum);
     }
+
+    public function testDifferentSingleItem()
+    {
+        $checkout = new Checkout();
+
+        $checkout->scan('D');
+
+        $sum = $checkout->getSum();
+        $this->assertEquals(42, $sum);
+    }
 }
