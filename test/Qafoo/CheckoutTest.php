@@ -23,4 +23,15 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $sum = $checkout->getSum();
         $this->assertEquals(42, $sum);
     }
+
+    public function testMultipleScansInSequence()
+    {
+        $checkout = new Checkout();
+
+        $checkout->scan('B');
+        $checkout->scan('D');
+
+        $sum = $checkout->getSum();
+        $this->assertEquals(65, $sum);
+    }
 }
