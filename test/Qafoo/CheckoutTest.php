@@ -34,4 +34,14 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $sum = $checkout->getSum();
         $this->assertEquals(65, $sum);
     }
+
+    public function testScanMultipleItemsAtOnce()
+    {
+        $checkout = new Checkout();
+
+        $checkout->scan('BDB');
+
+        $sum = $checkout->getSum();
+        $this->assertEquals(78, $sum);
+    }
 }
