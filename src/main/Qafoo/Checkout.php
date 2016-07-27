@@ -11,9 +11,11 @@ class Checkout
 
     private $currentPrice = 0;
 
-    public function scan($item)
+    public function scan($items)
     {
-        $this->currentPrice += $this->priceMap[$item];
+        for ($i = 0; $i < strlen($items); $i++) {
+            $this->currentPrice += $this->priceMap[$items[$i]];
+        }
     }
 
     public function getSum()
