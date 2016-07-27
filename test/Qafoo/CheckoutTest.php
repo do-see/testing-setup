@@ -42,6 +42,6 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $checkout->scan('BDB');
 
         $sum = $checkout->getSum();
-        $this->assertEquals(78, $sum);
+        $this->assertEquals(88, $sum);
     }
 }
