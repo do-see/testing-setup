@@ -13,7 +13,7 @@ class Checkout
 
     public function scan($item)
     {
-        $this->currentPrice = $this->priceMap[$item];
+        $this->currentPrice += $this->priceMap[$item];
     }
 
     public function getSum()
